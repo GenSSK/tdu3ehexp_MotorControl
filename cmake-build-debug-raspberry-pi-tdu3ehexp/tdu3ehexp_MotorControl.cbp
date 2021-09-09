@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="tdu3ehexp_MotorControl"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tdu3ehexp_MotorControl">
+				<Option output="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/tdu3ehexp_MotorControl" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pi/Desktop/MotorControl/tdu3ehexp_MotorControl"/>
+					<Add directory="/home/pi/Desktop/MotorControl/UDP"/>
+					<Add directory="/home/pi/Desktop/MotorControl/Plot"/>
+					<Add directory="/usr/include/c++/8"/>
+					<Add directory="/usr/include/aarch64-linux-gnu/c++/8"/>
+					<Add directory="/usr/include/c++/8/backward"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/aarch64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 tdu3ehexp_MotorControl"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="tdu3ehexp_MotorControl/fast">
+				<Option output="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/tdu3ehexp_MotorControl" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/home/pi/Desktop/MotorControl/tdu3ehexp_MotorControl"/>
+					<Add directory="/home/pi/Desktop/MotorControl/UDP"/>
+					<Add directory="/home/pi/Desktop/MotorControl/Plot"/>
+					<Add directory="/usr/include/c++/8"/>
+					<Add directory="/usr/include/aarch64-linux-gnu/c++/8"/>
+					<Add directory="/usr/include/c++/8/backward"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/8/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/lib/gcc/aarch64-linux-gnu/8/include-fixed"/>
+					<Add directory="/usr/include/aarch64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 tdu3ehexp_MotorControl/fast"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j4 -f &quot;/home/pi/Desktop/MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/home/pi/Desktop/MotorControl/Plot/paint_class.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/Plot/paint_class.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/Plot/paint_class_bc.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/Plot/paint_class_event.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/Plot/paint_conf.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/Plot/paint_conf.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/UDP/dataStruct.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/UDP/udpReceive.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/UDP/udpReceive.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/UDP/udpSend.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/UDP/udpSend.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/main.cpp">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/myconfig.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/myfunc.h">
+			<Option target="tdu3ehexp_MotorControl"/>
+		</Unit>
+		<Unit filename="/home/pi/Desktop/MotorControl/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
