@@ -15,12 +15,12 @@ void Control(double CurrentTime){
     int num = UR.receive(&pc, &mbed);   //UDPを受信
     static bool FirstTime = true;       //初回起動のみ実行するためのフラグ
     static int initial = 0;             //制御開始時のエンコーダパルスを記録する変数
-    static double thm_;                 //角度LPF計算用変数
-    static double thm_old;
-    static double wm_;                  //角速度LPF計算用変数
-    static double wm_old;
-    static double am_;                  //角加速度LPF計算用変数
-    static double am_old;
+    static double thm_ = 0.0;           //角度LPF計算用変数
+    static double thm_old = 0.0;
+    static double wm_ = 0.0;            //角速度LPF計算用変数
+    static double wm_old = 0.0;
+    static double am_ = 0.0;            //角加速度LPF計算用変数
+    static double am_old = 0.0;
     static double smp = 0.001;          //サンプリング時間[sec]
     static double cpr = 1024 * 4 * 3.7; //一周あたりのエンコーダパルス数p[pulses]
     static double T1 = 0.001;           //LPFの時定数
