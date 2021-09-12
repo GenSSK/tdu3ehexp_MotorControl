@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
         /*　0.001[sec]で実行　*/
         if (CurrentTime >= ControlledTime + 0.001) {
             ControlledTime = GetTime();
-            Control(CurrentTime);
+            Control(CurrentTime);   //制御を行う関数
         }
 
         /*　現在時刻の取得　*/
@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
         /*　0.01[sec]で実行　*/
         if (CurrentTime >= WroteTime + 0.01){
             WroteTime = GetTime();
-            csvWriter(CurrentTime, ControlledTime);            
+            csvWriter(CurrentTime, ControlledTime); //CSVに書き込みを行う関数
         }
 
         /*　現在時刻の取得　*/
@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
         /*　1[sec]で実行　*/
         if (CurrentTime >= PrintTime + 1.0){
             PrintTime = GetTime();
-            Print(CurrentTime);
+            Print(CurrentTime);     //Terminalに出力する関数
         }
     }
 
