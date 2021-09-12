@@ -278,8 +278,8 @@ namespace gl_setting {
         // 任意の入力で関数を呼びだす
         glutKeyboardFunc(KeyBoardPush);
         // 任意時間[msec]で関数を呼び出す
-        glutTimerFunc((int)(show_set::smp_disp * pow(10, 3)), DrawingUpdate, 0);
-
+        DrawingUpdate(0);
+        
         glutMainLoop();
     };
 }  // namespace gl_setting

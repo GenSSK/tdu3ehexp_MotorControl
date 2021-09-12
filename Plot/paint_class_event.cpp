@@ -110,7 +110,7 @@ namespace gl_setting {
         // 1回の描画
         flag::confir_disp = 1;
 
-        glutTimerFunc((int)(0.01 * pow(10, 3)), DrawingUpdate, 0);
+        glutTimerFunc((int)(show_set::smp_disp * 1000), DrawingUpdate, 0);
     }
 
     // 以下作成図のショートカット

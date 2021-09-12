@@ -14,7 +14,7 @@ struct MotorInformation{
     double amPast = 0.0;
 };
 
-extern MotorInformation MI;
+extern MotorInformation MI_send;
 
 namespace gl_setting {
     // 背景色
@@ -178,13 +178,13 @@ namespace gl_setting {
 
         /* 角度のプロット */
         GraphLabel("Time[sec]", "Angle[rad]", GLColor::Black);
-        GraphPlot(0, MI.t, MI.thm, 1.0, GLColor::Blue);
-        GraphPlot(1, MI.t, MI.thmref, 1.0, GLColor::Red);
+        GraphPlot(0, MI_send.t, MI_send.thm, 1.0, GLColor::Blue);
+        GraphPlot(1, MI_send.t, MI_send.thmref, 1.0, GLColor::Red);
 
         /* 角速度のプロット */
 //        GraphLabel("Time[sec]", "Angler Velocity[rad/s]", GLColor::Black);
-//        GraphPlot(0, MI.t, MI.wm, 1.0, GLColor::Blue);
-//        GraphPlot(1, MI.t, MI.wmref, 1.0, GLColor::Red);
+//        GraphPlot(0, MI_send.t, MI_send.wm, 1.0, GLColor::Blue);
+//        GraphPlot(1, MI_send.t, MI_send.wmref, 1.0, GLColor::Red);
 
         glFlush();
     }

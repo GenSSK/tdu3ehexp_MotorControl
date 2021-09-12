@@ -12,7 +12,7 @@ namespace test_set {
 namespace show_set {
     int window_num   = 0;
     double x_a       = 0.0;
-    double smp_disp  = 0.01;
+    double smp_disp  = 0.1;
     double time_str  = 0.0;
     double time_load = 0.0;
     double time_now  = 0.0;
