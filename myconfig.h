@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これは変数を宣言するヘッダファイルです． v1.0
+// これは変数を宣言するヘッダファイルです． v1.1
 //
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYCONFIG_H
@@ -33,6 +33,7 @@ struct MotorInformation{
 int count;  //Raspberry Pi -- mbed間の通信遅れを計算結果を格納する変数
 
 MotorInformation MI;    //モータに関する構造体を初期化
+MotorInformation MI_send;   //グラフ描画用の構造体を初期化
 
 udpReceive UR{50000, "10.0.1.4"};   //UDPの受信を設定
 udpSend US{1235, "10.0.1.3"};   //UDPの送信を設定

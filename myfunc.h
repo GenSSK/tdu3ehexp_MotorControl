@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これは関数を宣言するヘッダファイルです． v1.0
+// これは関数を宣言するヘッダファイルです． v1.1
 //
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYFUNC_H
@@ -21,7 +21,7 @@ void Control(double CurrentTime){
     static double wm_old = 0.0;
     static double am_ = 0.0;            //角加速度LPF計算用変数
     static double am_old = 0.0;
-    static double smp = 0.001;          //サンプリング時間[sec]
+    static double smp = 0.0;            //実サンプリング時間[sec]
     static double cpr = 1024 * 4 * 3.7; //一周あたりのエンコーダパルス数p[pulses]
     static double T1 = 0.001;           //LPFの時定数
     static double T2 = 0.01;            //LPFの時定数
@@ -32,6 +32,7 @@ void Control(double CurrentTime){
             FirstTime = false;
         }
     }
+    smp = CurrentTime - MI.t;   //実サンプリングの計算
     MI.t = CurrentTime; //現在の時間を格納
     thm_ = (double)(pc.tim4_pulse - initial) / cpr * 2 * M_PI;  //角度の計算
     MI.thm = ((2 * T1 - smp) / (2 * T1 + smp)) * MI.thmPast + (smp / (2 * T1 + smp)) * (thm_ + thm_old);    //角度にLPF
@@ -64,6 +65,7 @@ void Control(double CurrentTime){
         MI.u = -1.0;
     }
     mbed.ch1 = MI.u;    //UDP送信用変数に指令値を格納
+    MI_send = MI;   //描画用変数に値を渡す
 
     US.send(&mbed);     //UDP送信
     count = mbed.checkCount - pc.returnCount;   //Raspberry Pi -- mbed間の通信遅れを計算

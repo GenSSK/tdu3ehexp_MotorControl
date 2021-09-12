@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これはメイン関数です． v1.0
+// これはメイン関数です． v1.1
 //
 
 #include <iostream>
@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     double PrintTime = 0.0;         //[sec] 前回出力した時間
 
     /* 制御まで一定時間待つ */
-    sleep(1);
+    sleep(3);
 
     /* CSVを一度書き込む（初期値） */
     csvWriter(CurrentTime, ControlledTime);
@@ -39,21 +39,27 @@ int main(int argc, char* argv[]) {
         CurrentTime = GetTime();
 
         /*　0.001[sec]で実行　*/
-        if (CurrentTime - ControlledTime > 0.001) {
-            Control(CurrentTime);
+        if (CurrentTime >= ControlledTime + 0.001) {
             ControlledTime = GetTime();
+            Control(CurrentTime);
         }
+
+        /*　現在時刻の取得　*/
+        CurrentTime = GetTime();
 
         /*　0.01[sec]で実行　*/
-        if (CurrentTime - WroteTime > 0.01){
-            csvWriter(CurrentTime, ControlledTime);
+        if (CurrentTime >= WroteTime + 0.01){
             WroteTime = GetTime();
+            csvWriter(CurrentTime, ControlledTime);            
         }
 
+        /*　現在時刻の取得　*/
+        CurrentTime = GetTime();
+
         /*　1[sec]で実行　*/
-        if (CurrentTime - PrintTime > 1){
-            Print(CurrentTime);
+        if (CurrentTime >= PrintTime + 1.0){
             PrintTime = GetTime();
+            Print(CurrentTime);
         }
     }
 
