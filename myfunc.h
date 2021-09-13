@@ -124,6 +124,7 @@ double GetTime(){
     return time;
 }
 
+/* グラフを描画するスレッド用の関数 */
 void *func_thread(void *arg) {
     char *argv_[] = {"Plot"};
     int argc_ = 1;
