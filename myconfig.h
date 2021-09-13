@@ -30,10 +30,10 @@ struct MotorInformation{
     double e_d_i = 0.0; //角速度誤差の積分[(rad/s)*s]
 };
 
-int count;  //Raspberry Pi -- mbed間の通信遅れを計算結果を格納する変数
-
 MotorInformation MI;    //モータに関する構造体を初期化
 MotorInformation MI_send;   //グラフ描画用の構造体を初期化
+
+int count;  //Raspberry Pi -- mbed間の通信遅れを計算結果を格納する変数
 
 udpReceive UR{50000, "10.0.1.4"};   //UDPの受信を設定
 udpSend US{1235, "10.0.1.3"};   //UDPの送信を設定
