@@ -1,17 +1,24 @@
 #include "paint_class.h"
 
 struct MotorInformation{
-    double t = 0.0;
-    double u = 0.0;
-    double thm = 0.0;
-    double wm = 0.0;
-    double am = 0.0;
-    double thmref = 0.0;
-    double wmref = 0.0;
-    double amref = 0.0;
-    double thmPast = 0.0;
-    double wmPast = 0.0;
-    double amPast = 0.0;
+    double t = 0.0; //時間[s]
+    double u = 0.0; //電流[A]
+    double thm = 0.0;   //現在の角度[rad]
+    double wm = 0.0;    //現在の角速度[rad/s]
+    double am = 0.0;    //現在の角加速度[rad/s^2]
+    double thmref = 0.0;    //目標の角度[rad]
+    double wmref = 0.0; //目標の角速度[rad/s]
+    double amref = 0.0; //目標の角加速度[rad/s^2]
+    double thmPast = 0.0;   //1ステップ前の角度[rad]
+    double wmPast = 0.0;    //1ステップ前の角速度[rad/s]
+    double amPast = 0.0;    //1ステップ前の角加速度[rad/s^2]
+    double kp = 0.0;    //Pゲイン[-]
+    double kd = 0.0;    //Dゲイン[-]
+    double ki = 0.0;    //Iゲイン[-]
+    double e = 0.0; //角度誤差[rad]
+    double e_d = 0.0; //角速度誤差[rad/s]
+    double e_i = 0.0;   //角度誤差の積分[rad*s]
+    double e_d_i = 0.0; //角速度誤差の積分[(rad/s)*s]
 };
 
 extern MotorInformation MI_send;
