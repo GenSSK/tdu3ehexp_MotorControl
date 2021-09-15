@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これはメイン関数です． v1.1
+// これはメイン関数です． v1.2
 //
 
 #include <iostream>
@@ -28,9 +28,6 @@ int main(int argc, char* argv[]) {
 
     /* 制御まで一定時間待つ */
     sleep(3);
-
-    /* CSVを一度書き込む（初期値） */
-    csvWriter(CurrentTime, ControlledTime);
 
     /*　終了時間まで制御するループ　*/
     while (CurrentTime < EndTime) {

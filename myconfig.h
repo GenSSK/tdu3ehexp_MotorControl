@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これは変数を宣言するヘッダファイルです． v1.1
+// これは変数を宣言するヘッダファイルです． v1.2
 //
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYCONFIG_H
