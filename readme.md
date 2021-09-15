@@ -25,10 +25,7 @@ C言語のプログラミングに自信のない方は，プログラミング�
     double PrintTime = 0.0;         //[sec] 前回出力した時間
 
     /* 制御まで一定時間待つ */
-    sleep(1);
-
-    /* CSVを一度書き込む（初期値） */
-    csvWriter(CurrentTime, ControlledTime);
+    sleep(3);
 
 ここで，制御の時間は
 
