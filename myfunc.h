@@ -10,7 +10,7 @@
 #include <math.h>
 #include <pthread.h>
 
-/* 制御を行う関数 */
+/* 制御を行う関数 1kHz毎に呼ばれる */
 void Control(double CurrentTime){
     int num = UR.receive(&pc, &mbed);   //UDPを受信
     static bool FirstTime = true;       //初回起動のみ実行するためのフラグ
@@ -48,13 +48,17 @@ void Control(double CurrentTime){
     am_old = am_; //角加速度LPF用の値を保持
     /*-----------------------------------ここから書いてください----------------------------------------------*/
 
+    MI.thmref = M_PI * 2; // 目標値
+    MI.e_i += MI.thmref - MI.Thm // 定常偏差の蓄積 (目標値 - 現在)
 
+    // P制御
+    MI.u = MI.kp * (MI.Thmref - MI.Thm)
 
+    // PD制御
+    MI.u = MI.kp * (MI.Thmref - MI.Thm) + MI.kd * (0 - MI.wm)
 
-
-
-
-
+    // PID
+    MI.u = MI.kp * (MI.Thmref - MI.Thm) + MI.kd * (0 - MI.wm) + MI.ki * MI.e_i
 
 
     /*-----------------------------------ここまで書いてください----------------------------------------------*/
