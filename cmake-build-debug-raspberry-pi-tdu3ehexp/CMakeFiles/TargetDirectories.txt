@@ -1,3 +1,0 @@
-/home/pi/Desktop/tdu3ehexp_MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/CMakeFiles/rebuild_cache.dir
-/home/pi/Desktop/tdu3ehexp_MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/CMakeFiles/MotorControl.dir
-/home/pi/Desktop/tdu3ehexp_MotorControl/cmake-build-debug-raspberry-pi-tdu3ehexp/CMakeFiles/edit_cache.dir
