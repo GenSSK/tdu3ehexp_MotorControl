@@ -6,8 +6,6 @@
 
 # ------------ C++ ---------------
 
-build/
-
 # ccls cache
 .ccls-cache/
 
