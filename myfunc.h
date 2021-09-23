@@ -71,17 +71,18 @@ void Control(double CurrentTime){
 
     /*-----------------------------------ここから書いてください----------------------------------------------*/
 
-    MI.thmref = M_PI * 2; // 目標値
-    MI.e_i += MI.thmref - MI.Thm // 定常偏差の蓄積 (目標値 - 現在)
+    MI.thmref = M_PI * 2; // 角度の目標値
+    MI.wmref = 0.0;  // 角速度の目標値
+    MI.kp = 0.1;
+    MI.kd = 0.0;
+    MI.ki = 0.0;
 
-    // P制御
-    MI.u = MI.kp * (MI.Thmref - MI.Thm)
+    MI.e = MI.thmref - MI.thm;   // 角度誤差
+    MI.e_d = 0.0 - MI.wm;        // 角速度誤差
+    MI.e_i += MI.e; // 定常偏差の蓄積 (目標値 - 現在)
 
-    // PD制御
-    MI.u = MI.kp * (MI.Thmref - MI.Thm) + MI.kd * (0 - MI.wm)
-
-    // PID
-    MI.u = MI.kp * (MI.Thmref - MI.Thm) + MI.kd * (0 - MI.wm) + MI.ki * MI.e_i
+    MI.u = MI.kp * MI.e + MI.kd * MI.e_d + MI.ki * MI.e_i
+    
     /*-----------------------------------ここまで書いてください----------------------------------------------*/
     /* 制御指令値は最大1.0~-1.0なので，制限を計算する */
     if (MI.u > 1.0){
