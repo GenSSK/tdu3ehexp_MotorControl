@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これは関数を宣言するヘッダファイルです． v1.2
+// これは関数を宣言するヘッダファイルです． v1.3
 //
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYFUNC_H
@@ -15,8 +15,6 @@ void Control(double CurrentTime){
     int num = UR.receive(&pc, &mbed);   //UDPを受信
     static bool FirstTime = true;       //初回起動のみ実行するためのフラグ
     static int initial = 0;             //制御開始時のエンコーダパルスを記録する変数
-    static double thm_ = 0.0;           //角度LPF計算用変数
-    static double thm_old = 0.0;
     static double wm_ = 0.0;            //角速度LPF計算用変数
     static double wm_old = 0.0;
     static double am_ = 0.0;            //角加速度LPF計算用変数
@@ -25,6 +23,8 @@ void Control(double CurrentTime){
     static double cpr = 1024 * 4 * 3.7; //一周あたりのエンコーダパルス数p[pulses]
     static double T1 = 0.001;           //LPFの時定数
     static double T2 = 0.01;            //LPFの時定数
+    static int OverSpeedCount = 0;      //角速度制限のカウント
+    static int ResponseCount = 0;       //モータのレスポンスをカウント
     /*　制御開始時にエンコーダパルスを記録（初期値記録）　*/
     if(FirstTime) {
         if (num > 0) {
@@ -32,20 +32,43 @@ void Control(double CurrentTime){
             FirstTime = false;
         }
     }
+
+    /* 角度・角速度・角加速度の計算 */
     smp = CurrentTime - MI.t;   //実サンプリングの計算
     MI.t = CurrentTime; //現在の時間を格納
-    thm_ = (double)(pc.tim4_pulse - initial) / cpr * 2 * M_PI;  //角度の計算
-    MI.thm = ((2 * T1 - smp) / (2 * T1 + smp)) * MI.thmPast + (smp / (2 * T1 + smp)) * (thm_ + thm_old);    //角度にLPF
+    MI.thm = (double)(pc.tim4_pulse - initial) / cpr * 2 * M_PI;  //角度の計算
     wm_ = (MI.thm - MI.thmPast) / smp;  //角速度の計算
     MI.wm = ((2 * T2 - smp) / (2 * T2 + smp)) * MI.wmPast + (smp / (2 * T2 + smp)) * (wm_ + wm_old);    //角速度にLPF
     am_ = (MI.wm - MI.wmPast) / smp;    //角加速度の計算
-    MI.am = ((2 * T2 - smp) / (2 * T2 + smp)) * MI.amPast + (smp / (2 * T2 + smp)) * (am_ + am_old);    //角速度にLPF
+    MI.am = ((2 * T2 - smp) / (2 * T2 + smp)) * MI.amPast + (smp / (2 * T2 + smp)) * (am_ + am_old);    //角加速度にLPF
     MI.thmPast = MI.thm;    //角度の値を保持
     MI.wmPast = MI.wm;    //角速度の値を保持
     MI.amPast = MI.am;    //角加速度の値を保持
-    thm_old = thm_; //角度LPF用の値を保持
     wm_old = wm_; //角速度LPF用の値を保持
     am_old = am_; //角加速度LPF用の値を保持
+
+    /* 一定速度に達したら制御を終了する */
+    if(fabs(MI.wm) > 40) {
+        OverSpeedCount++;
+        if (OverSpeedCount > 300){
+            EndFlag = true;
+            std::cout << "Over Speed!! FORCE STOP" << std::endl;
+        }
+    } else {
+        OverSpeedCount = 0;
+    }
+
+    /* エンコーダの異常検知 */
+    if(fabs(MI.wm) < 0.15 && fabs(MI.u) > 0.05){
+        ResponseCount++;
+        if (ResponseCount > 300){
+            EndFlag = true;
+            std::cout << "Encoder is dead!! FORCE STOP" << std::endl;
+        }
+    } else {
+        ResponseCount = 0;
+    }
+
     /*-----------------------------------ここから書いてください----------------------------------------------*/
 
     MI.thmref = M_PI * 2; // 目標値
@@ -59,10 +82,8 @@ void Control(double CurrentTime){
 
     // PID
     MI.u = MI.kp * (MI.Thmref - MI.Thm) + MI.kd * (0 - MI.wm) + MI.ki * MI.e_i
-
-
     /*-----------------------------------ここまで書いてください----------------------------------------------*/
-    /* 制御指令値は最大1~-1なので，制限を計算する */
+    /* 制御指令値は最大1.0~-1.0なので，制限を計算する */
     if (MI.u > 1.0){
         MI.u = 1.0;
     } else if (MI.u < -1.0){
@@ -110,7 +131,9 @@ void csvWriter(double CurrentTime, double OldTime){
 
 /* Terminalに出力する関数（printf） */
 double Print(double CurrentTime){
+    std::cout << "Time = ";
     std::cout << CurrentTime;
+    std::cout << " (sec)";
     std::cout << std::endl;
 }
 

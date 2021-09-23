@@ -1,6 +1,6 @@
 //
 // Created by Genki Sasaki on 2021/08/01.
-// これはメイン関数です． v1.2
+// これはメイン関数です． v1.3
 //
 
 #include <iostream>
@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
         /*　0.001[sec]で実行　*/
         if (CurrentTime >= ControlledTime + 0.001) {
             ControlledTime = GetTime();
-            Control(CurrentTime);   //制御を行う関数
+            Control(CurrentTime);   //制御を行う関数            
         }
 
         /*　現在時刻の取得　*/
@@ -58,6 +58,10 @@ int main(int argc, char* argv[]) {
             PrintTime = GetTime();
             Print(CurrentTime);     //Terminalに出力する関数
         }
+
+        /* 終了フラグによる緊急停止 */
+        if (EndFlag)
+            break;
     }
 
     mbed.ch1 = 0.0;     //モータの指令値を0にする

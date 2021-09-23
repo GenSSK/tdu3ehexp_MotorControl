@@ -46,6 +46,7 @@ C言語のプログラミングに自信のない方は，プログラミング�
 ループ内のif文はそれぞれ決められた時間に実行されます．
 時間を取得→if文と比較することで，リアルタイム性を確保しています．
 以下のプログラムでは1kHzで制御を実行，100HzでCSVを書き込み，1Hzでターミナルに出力を行っています．
+また，緊急停止のフラグを毎ループ確認しています．終了フラグが`True`であれば，制御ループを抜けます．
 
     /*　現在時刻の取得　*/
     CurrentTime = GetTime();
@@ -74,6 +75,10 @@ C言語のプログラミングに自信のない方は，プログラミング�
         Print(CurrentTime);     //Terminalに出力する関数
     }
 
+    /* 終了フラグによる緊急停止 */
+        if (EndFlag)
+            break;
+
 最後に制御を終了しプログラムを終わります．
 
     mbed.ch1 = 0.0;     //モータの指令値を0にする
@@ -84,7 +89,7 @@ C言語のプログラミングに自信のない方は，プログラミング�
     std::cout << "End, Control motor!" << std::endl;
     return -1;
 
-以上がmain.cppの内容になります．
+以上が`main.cpp`の内容になります．
 
 ### myconfig.h
 このヘッダーファイルでは使用するグローバル変数やクラスなどの宣言を行っています．
@@ -122,15 +127,18 @@ C言語のプログラミングに自信のない方は，プログラミング�
     };
 
 次に構造体を初期化します．
-ここでMIはモータ制御に使用し，MI_sendはグラフプロット用に使用されます．
+ここでMIはモータ制御に使用し，`MI_send`はグラフプロット用に使用されます．
 制御を記述する際はMIを使用してください．
 
     MotorInformation MI;        //モータに関する構造体を初期化
     MotorInformation MI_send;   //グラフ描画用の構造体を初期化
 
-以下はUDPの送受信を行うための宣言です．
+変数を定義します，`EndFlag`はモータの緊急停止を監視するフラグです．
 
-    int count;  //Raspberry Pi -- mbed間の通信遅れを計算結果の格納する変数
+    int count;              //Raspberry Pi -- mbed間の通信遅れを計算結果の格納する変数
+    bool EndFlag = false;  //モータ制御を終了するためのフラグ
+
+以下はUDPの送受信を行うための宣言です．
 
     udpReceive UR{50000, "10.0.1.4"};   //UDPの受信を設定
     udpSend US{1235, "10.0.1.3"};       //UDPの送信を設定
@@ -138,7 +146,7 @@ C言語のプログラミングに自信のない方は，プログラミング�
     toMbed mbed;    //UDP送信用の構造体を初期化
     toPC pc;        //UDP受信用の構造体を初期化
 
-以上がmyconfig.hの内容です．
+以上が`myconfig.h`の内容です．
 
 ### myfunc.h
 このヘッダーファイルでは制御に使用する関数が宣言されています．
@@ -161,10 +169,9 @@ C言語のプログラミングに自信のない方は，プログラミング�
 
 次に，関数内で使用される変数の定義が行われます．
     
+    int num = UR.receive(&pc, &mbed);   //UDPを受信
     static bool FirstTime = true;       //初回起動のみ実行するためのフラグ
     static int initial = 0;             //制御開始時のエンコーダパルスを記録する変数
-    static double thm_ = 0.0;           //角度LPF計算用変数
-    static double thm_old = 0.0;
     static double wm_ = 0.0;            //角速度LPF計算用変数
     static double wm_old = 0.0;
     static double am_ = 0.0;            //角加速度LPF計算用変数
@@ -173,6 +180,8 @@ C言語のプログラミングに自信のない方は，プログラミング�
     static double cpr = 1024 * 4 * 3.7; //一周あたりのエンコーダパルス数p[pulses]
     static double T1 = 0.001;           //LPFの時定数
     static double T2 = 0.01;            //LPFの時定数
+    static int OverSpeedCount = 0;      //角速度制限のカウント
+    static int ResponseCount = 0;       //モータのレスポンスをカウント
 
 次に，初回のみエンコーダの初期値を計算します．
 これによって，初期値ズレによるモータの暴走を抑制します．
@@ -189,22 +198,45 @@ C言語のプログラミングに自信のない方は，プログラミング�
 ここでは，まずはじめにサンプリング時間（現在の時間から前回制御した時間の差分）を計算します．
 そして，エンコーダのパルスから角度を計算します．
 その後，角度をサンプリング時間で微分して角速度を計算，同様に角加速度を角速度から計算します．
-ここで，エンコーダのパルス列は離散的であるため，LPFを用いて平滑化を行います．
+ここで，エンコーダのパルス列は離散的であるため，角速度・角加速度の計算にはLPFを用いて平滑化を行います．
 
+    /* 角度・角速度・角加速度の計算 */
     smp = CurrentTime - MI.t;   //実サンプリングの計算
     MI.t = CurrentTime; //現在の時間を格納
-    thm_ = (double)(pc.tim4_pulse - initial) / cpr * 2 * M_PI;  //角度の計算
-    MI.thm = ((2 * T1 - smp) / (2 * T1 + smp)) * MI.thmPast + (smp / (2 * T1 + smp)) * (thm_ + thm_old);    //角度にLPF
+    MI.thm = (double)(pc.tim4_pulse - initial) / cpr * 2 * M_PI;  //角度の計算
     wm_ = (MI.thm - MI.thmPast) / smp;  //角速度の計算
     MI.wm = ((2 * T2 - smp) / (2 * T2 + smp)) * MI.wmPast + (smp / (2 * T2 + smp)) * (wm_ + wm_old);    //角速度にLPF
     am_ = (MI.wm - MI.wmPast) / smp;    //角加速度の計算
-    MI.am = ((2 * T2 - smp) / (2 * T2 + smp)) * MI.amPast + (smp / (2 * T2 + smp)) * (am_ + am_old);    //角速度にLPF
+    MI.am = ((2 * T2 - smp) / (2 * T2 + smp)) * MI.amPast + (smp / (2 * T2 + smp)) * (am_ + am_old);    //角加速度にLPF
     MI.thmPast = MI.thm;    //角度の値を保持
     MI.wmPast = MI.wm;    //角速度の値を保持
     MI.amPast = MI.am;    //角加速度の値を保持
-    thm_old = thm_; //角度LPF用の値を保持
     wm_old = wm_; //角速度LPF用の値を保持
     am_old = am_; //角加速度LPF用の値を保持
+
+つぎに安全措置のため緊急停止条件を書きます．
+
+    /* 一定速度に達したら制御を終了する */
+    if(fabs(MI.wm) > 40) {
+        OverSpeedCount++;
+        if (OverSpeedCount > 300){
+            EndFlag = true;
+            std::cout << "Over Speed!! FORCE STOP" << std::endl;
+        }
+    } else {
+        OverSpeedCount = 0;
+    }
+
+    /* エンコーダの異常検知 */
+    if(fabs(MI.wm) < 0.15 && fabs(MI.u) > 0.05){
+        ResponseCount++;
+        if (ResponseCount > 300){
+            EndFlag = true;
+            std::cout << "Encoder is dead!! FORCE STOP" << std::endl;
+        }
+    } else {
+        ResponseCount = 0;
+    }
 
 ここまで計算できたら，モータの角度，角速度，角加速度の情報を使って制御の記述を行います．
 制御は以下に示す部分に記述してください．
@@ -256,7 +288,7 @@ C言語のプログラミングに自信のない方は，プログラミング�
     }
 
 
-以上がmyfunc.hの内容です．
+以上が`myfunc.h`の内容です．
 
 ## 実験で記述する場所
 実験では
@@ -308,7 +340,7 @@ CSVのファイル名を変更する場合はmyconfig.h内の`FILE_NAME`を変�
 ## 速度制御をする場合
 モータ制御実験の後半では速度制御を行います．
 ここで，速度制御の場合はグラフの縦軸を角度から角速度に変更する必要があります．
-そこで，Plotフォルダのpaint_class_bc.cppの一番下にある関数を一部変更します．
+そこで，Plotフォルダの`paint_class_bc.cpp`の一番下にある関数を一部変更します．
 
 初期状態では
 
@@ -335,3 +367,28 @@ CSVのファイル名を変更する場合はmyconfig.h内の`FILE_NAME`を変�
     GraphPlot(1, MI_send.t, MI_send.wmref, 1.0, GLColor::Red);
 
 と変更します．
+
+## プログラムの実行方法
+`build`ディレクトリまで移動します．
+ディレクトリ内には`CMakeLists.txt`が存在しています．
+`CMakeLists.txt`には，どのプログラムファイルを使用するかが書かれています．
+ここで
+
+    cmake .
+
+を実行します．
+そうすると，`Makefile`が生成されます．
+これは，プログラムのコンパイル・ビルドの方法が書かれています．
+ここで
+
+    make
+
+を実行すると，プログラムのコンパイル・ビルドが行われます．
+無事にビルドまで終了すると`MotorControl`という実行ファイルが生成されます．
+そして，
+
+    ./MotorControl
+
+を実行することで，プログラムが実行されます．
+
+プログラムを修正して再度ビルド・コンパイルする場合は，`make`コマンドから行ってください．
