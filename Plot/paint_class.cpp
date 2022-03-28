@@ -257,7 +257,7 @@ namespace gl_setting {
     void PaintClass::RealTimePlot(int argc, char* argv[], int mode_size){
         /*初期化*/
         Window_num_ = 1;    //Window number
-        glutInitWindowPosition(500, 100);   //画面表示位置
+        glutInitWindowPosition(600, 100);   //画面表示位置
         WindowSizeSet(mode_size);   //描画画面サイズ
         glutInitWindowSize(WSx_, WSy_); //サイズ決定
         glutInitDisplayMode(GLUT_RGBA); // ウィンドウモード(default) + window 表示
