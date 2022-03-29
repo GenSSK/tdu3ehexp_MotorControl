@@ -20,10 +20,6 @@ int main(int argc, char* argv[]) {
 
 	/* グラフプロット用のスレッド処理の開始 */
 	pthread_t pthread;  //スレッドを初期化
-	cpu_set_t cpuset;			// CPU設定用変数
-	CPU_ZERO(&cpuset);			// まずCPU設定用変数をクリア
-	CPU_SET(1, &cpuset);	// 指定したCPUコア番号をCPU設定用変数にセット，
-	pthread_setaffinity_np(pthread, sizeof(cpu_set_t), &cpuset);	// スレッドをCPUコアに割り当てる
 	pthread_create(&pthread, NULL, func_thread, NULL);  //スレッドを作成・開始
 
 	/*　変数の宣言　*/
