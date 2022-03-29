@@ -14,25 +14,25 @@ if(GLUT_FOUND)
 endif()
 
 INCLUDE_DIRECTORIES(MotorControl
-        ../UDP
-        ../Plot
+        UDP
+        Plot
 )
 
 add_executable(MotorControl
-        ../main.cpp
-        ../myconfig.h
-        ../myfunc.h
-        ../UDP/udpReceive.h
-        ../UDP/udpReceive.cpp
-        ../UDP/udpSend.h
-        ../UDP/udpSend.cpp
-        ../UDP/dataStruct.h
-        ../Plot/paint_class.cpp
-        ../Plot/paint_class.h
-        ../Plot/paint_class_bc.cpp
-        ../Plot/paint_class_event.cpp
-        ../Plot/paint_conf.cpp
-        ../Plot/paint_conf.h
+        main.cpp
+        myconfig.h
+        myfunc.h
+        UDP/udpReceive.h
+        UDP/udpReceive.cpp
+        UDP/udpSend.h
+        UDP/udpSend.cpp
+        UDP/dataStruct.h
+        Plot/paint_class.cpp
+        Plot/paint_class.h
+        Plot/paint_class_bc.cpp
+        Plot/paint_class_event.cpp
+        Plot/paint_conf.cpp
+        Plot/paint_conf.h
         )
 
 target_link_libraries(MotorControl
