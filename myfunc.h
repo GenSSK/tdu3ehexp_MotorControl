@@ -36,7 +36,7 @@ void Control(double CurrentTime){
 	static double am_old = 0.0;
 	static double smp = 0.0;            //実サンプリング時間[sec]
 	static double cpr = 1024 * 4 * 3.7; //一周あたりのエンコーダパルス数p[pulses]
-	static double wc = 300;             //カットオフ周波数[rad/s]
+	static double wc = 100;             //カットオフ周波数[rad/s]
 	static double t = wc * 0.001;       //LPFの時定数
 	static int ResponseCount = 0;       //モータのレスポンスをカウント
 	static int OverSpeedCount = 0;      //角速度制限のカウント
@@ -53,7 +53,7 @@ void Control(double CurrentTime){
 	MI.t = CurrentTime; //現在の時間を格納
 	MI.thm = (double)(pc.tim4_pulse - initial) / cpr * 2 * M_PI;  //角度の計算
 	wm_ = (MI.thm - MI.thmPast) / smp;  //角速度の計算
-	MI.wm = ((2 - wc * smp) / (2 + wc * smp)) * MI.wm + wc * smp / (2 + wc * smp) * (wm_ + wm_old);    //角速度にLPF
+	MI.wm = ((2 - t) / (2 + t)) * MI.wm + t / (2 + t) * (wm_ + wm_old);    //角速度にLPF
 	am_ = (MI.wm - MI.wmPast) / smp;    //角加速度の計算
 	MI.am = ((2 - t) / (2 + t)) * MI.am + t / (2 + t) * (am_ + am_old);    //角加速度にLPF
 	MI.thmPast = MI.thm;    //角度の値を保持
