@@ -384,21 +384,21 @@ GraphPlot(1, MI_send.t, MI_send.wmref, 1.0, GLColor::Red);
 ディレクトリ内には`CMakeLists.txt`が存在しています．
 `CMakeLists.txt`には，どのソースファイルを使用するかが書かれています．
 ここで
-```bash
+```shell
 cmake -S . -B build
 ```
 を実行します．
 そうすると，`build`ディレクトリが生成されて，その中に `Makefile`が生成されます．
 この`Makefile`には，ソースファイルをどのようにビルド・コンパイルするかの設定が書かれています．
 ここで
-```bash
+```shell
 cd build
 make
 ```
 を実行すると，プログラムのビルド・コンパイルが行われます．
 無事にコンパイルまで終了すると`MotorControl`という実行ファイルが生成されます．
 そして，
-```bash
+```shell
 ./MotorControl
 ```
 を実行することで，プログラムが実行されます．
