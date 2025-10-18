@@ -3,7 +3,7 @@
  * @brief   関数を宣言するヘッダファイル
  * @author  Genki Sasaki
  * @date    2021/08/01
- * @version 1.4
+ * @version 1.5
  */
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYFUNC_H
@@ -68,7 +68,7 @@ void Control(double CurrentTime){
 		OverSpeedCount++;
 		if (OverSpeedCount > 300){
 			EndFlag = true;
-			std::cout << "Over Speed!! FORCE STOP" << std::endl;
+			std::cout << "Over Speed!!" << std::endl;
 		}
 	} else {
 		OverSpeedCount = 0;
@@ -79,13 +79,14 @@ void Control(double CurrentTime){
 		ResponseCount++;
 		if (ResponseCount > 300){
 			EndFlag = true;
-			std::cout << "Encoder is dead!! FORCE STOP" << std::endl;
+			std::cout << "Encoder is dead!!" << std::endl;
 		}
 	} else {
 		ResponseCount = 0;
 	}
 
 	/*-----------------------------------ここから書いてください----------------------------------------------*/
+
 
 	/*-----------------------------------ここまで書いてください----------------------------------------------*/
 	/* 制御指令値は最大1.0~-1.0なので，制限を計算する */
@@ -103,38 +104,52 @@ void Control(double CurrentTime){
 
 /*!
  * @brief	CSVを記録する関数
- * @param[in] CurrentTime	現在の時間(sec)
- * @param[in] OldTime	前回の時間(sec)
+ * @param[in] WriteFlag	CSVの書き込みを行うフラグ
  * */
-void csvWriter(double CurrentTime, double OldTime){
-	static bool FirstTime = true;
-	static std::ofstream OutputFile;
+void csvWriter(bool WriteFlag){
+	static int Data_num = 13; //CSVに書き込むデータの数
+	static std::vector<std::vector<double>> Data(Data_num, std::vector<double>(0)); //CSVに書き込むデータを格納する変数
 
-	/* 初回実行時にラベルを書き込む（一行目） */
-	if(FirstTime) {
+	/* 正常終了時にCSVを生成する */
+	if(WriteFlag) {
+		std::ofstream OutputFile;
+		/* ラベルを書き込む（一行目） */
 		OutputFile.open(FILE_NAME, std::ios::out);  //指定されたファイルネームでCSVを作成
 		OutputFile << "CurrentTime[sec],Current[A],Voltage[V],TargetAngle[rad],Angle[rad],TargetVelocity[rad/s],Velocity[rad/s]"
-		              ",TargetAcceleration[rad/s^2],Acceleration[rad/s^2]"
-		              ",kp[-],kd[-],ki[-],e_i[rad*s]";
+					  ",TargetAcceleration[rad/s^2],Acceleration[rad/s^2]"
+					  ",kp[-],kd[-],ki[-],e_i[rad*s]";
 		OutputFile << std::endl;
-		FirstTime = false;
+
+		/* 値を書き込む */
+		for (int i = 0; i < Data[0].size(); ++i) {
+			for (int j = 0; j < Data_num; ++j) {
+				OutputFile << Data[j][i];
+				if (j != Data_num - 1) {
+					OutputFile << ",";
+				}
+			}
+			OutputFile << std::endl;
+		}
+		OutputFile.close();
+		std::cout << "CSV Write Complete!!" << std::endl;
+
+		return;
 	}
 
-	/* 値をCSVに書き込む */
-	OutputFile << MI.t;
-	OutputFile << "," << MI.u;
-	OutputFile << "," << MI.u * 24;
-	OutputFile << "," << MI.thmref;
-	OutputFile << "," << MI.thm;
-	OutputFile << "," << MI.wmref;
-	OutputFile << "," << MI.wm;
-	OutputFile << "," << MI.amref;
-	OutputFile << "," << MI.am;
-	OutputFile << "," << MI.kp;
-	OutputFile << "," << MI.kd;
-	OutputFile << "," << MI.ki;
-	OutputFile << "," << MI.e_i;
-	OutputFile << std::endl;
+	/* 値をDataに書き込む */
+	Data[0].push_back(MI.t);
+	Data[1].push_back(MI.u);
+	Data[2].push_back(MI.u * 24);
+	Data[3].push_back(MI.thmref);
+	Data[4].push_back(MI.thm);
+	Data[5].push_back(MI.wmref);
+	Data[6].push_back(MI.wm);
+	Data[7].push_back(MI.amref);
+	Data[8].push_back(MI.am);
+	Data[9].push_back(MI.kp);
+	Data[10].push_back(MI.kd);
+	Data[11].push_back(MI.ki);
+	Data[12].push_back(MI.e_i);
 
 }
 

@@ -3,7 +3,7 @@
  * @brief   変数を宣言するヘッダファイル
  * @author  Genki Sasaki
  * @date    2021/08/01
- * @version 1.4
+ * @version 1.5
  */
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYCONFIG_H
