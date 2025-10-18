@@ -87,6 +87,7 @@ void Control(double CurrentTime){
 
 	/*-----------------------------------ここから書いてください----------------------------------------------*/
 
+
 	/*-----------------------------------ここまで書いてください----------------------------------------------*/
 	/* 制御指令値は最大1.0~-1.0なので，制限を計算する */
 	if (MI.u > 1.0){
@@ -103,15 +104,14 @@ void Control(double CurrentTime){
 
 /*!
  * @brief	CSVを記録する関数
- * @param[in] CurrentTime	現在の時間(sec)
- * @param[in] OldTime	前回の時間(sec)
+ * @param[in] WriteFlag	CSVの書き込みを行うフラグ
  * */
-void csvWriter(double CurrentTime, double OldTime){
+void csvWriter(bool WriteFlag){
 	static int Data_num = 13; //CSVに書き込むデータの数
 	static std::vector<std::vector<double>> Data(Data_num, std::vector<double>(0)); //CSVに書き込むデータを格納する変数
 
 	/* 正常終了時にCSVを生成する */
-	if(EndFlag) {
+	if(WriteFlag) {
 		std::ofstream OutputFile;
 		/* ラベルを書き込む（一行目） */
 		OutputFile.open(FILE_NAME, std::ios::out);  //指定されたファイルネームでCSVを作成
