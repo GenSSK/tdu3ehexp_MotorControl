@@ -3,7 +3,7 @@
  * @brief   関数を宣言するヘッダファイル
  * @author  Genki Sasaki
  * @date    2021/08/01
- * @version 1.5
+ * @version 1.6
  */
 
 #ifndef TDU3EHEXP_MOTORCONTROL_MYFUNC_H

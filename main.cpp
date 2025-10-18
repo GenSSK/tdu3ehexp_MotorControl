@@ -3,7 +3,7 @@
  * @brief   メイン関数
  * @author  Genki Sasaki
  * @date    2021/08/01
- * @version 1.5
+ * @version 1.6
  */
 
 #include <iostream>
