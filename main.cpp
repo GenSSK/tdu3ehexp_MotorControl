@@ -3,7 +3,7 @@
  * @brief   メイン関数
  * @author  Genki Sasaki
  * @date    2021/08/01
- * @version 1.5
+ * @version 1.4
  */
 
 #include <iostream>
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 		/*　0.01[sec]で実行　*/
 		if (CurrentTime >= WroteTime + 0.01){
-			csvWriter(false); //CSVに書き込みを行う関数
+			csvWriter(CurrentTime, ControlledTime); //CSVに書き込みを行う関数
 			WroteTime = GetTime();
 		}
 
@@ -63,20 +63,8 @@ int main(int argc, char* argv[]) {
 		}
 
 		/* 終了フラグによる緊急停止 */
-		if (EndFlag || kbhit() == 1) {
-			EndFlag = true;		//終了フラグを立てる
+		if (EndFlag || kbhit() == 1)
 			break;
-		}
-	}
-
-	/* 正常終了時にCSVファイルを書き込み */
-	if (!EndFlag) {
-		std::cout << "Normal End!" << std::endl;
-		std::cout << "CSV file is saved as " << FILE_NAME << std::endl;
-		csvWriter(true);
-	} else {
-		std::cout << "Emergency Stop!" << std::endl;
-		std::cout << "CSV file is not saved!" << std::endl;
 	}
 
 	mbed.ch1 = 0.0;     //モータの指令値を0にする
