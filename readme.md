@@ -4,13 +4,14 @@
 ## プログラムの内容
 このプログラムはみなさんが触る部分はC言語によって書かれています．
 C言語のプログラミングに自信のない方は，プログラミングの授業を復習することをおすすめします．
+またChatGPTやGemini，Claudeなどを使用してコードの理解を促進されることも良いでしょう．
 
 このプログラムで制御に必要なファイルは3つです．
 それらの役割について以下に解説を行います．
 
-### main.cpp
+### 1. main.cpp
 以下は制御ループに入る前の前処理です．
-```cpp
+```c++
 std::cout << "Start, Control motor!" << std::endl;
 
 /* グラフプロット用のスレッド処理の開始 */
@@ -31,14 +32,14 @@ sleep(3);
 
 ここで，制御の時間は
 
-```cpp
+```c++
 double EndTime = 10.0;          //[sec] 終了時間
 ```
 
 で設定できます．
 
 また，グラフプロットを行う部分は
-```cpp
+```c++
 pthread_t pthread;  //スレッドを初期化
 pthread_create(&pthread, NULL, func_thread, NULL);  //スレッドを作成・開始
 ```
@@ -47,7 +48,7 @@ pthread_create(&pthread, NULL, func_thread, NULL);  //スレッドを作成・�
 次に制御ループの説明をします．
 
 このループでは制御時間が設定時間に達するまでループを続けます．
-```cpp
+```c++
 /*　終了時間まで制御するループ　*/
 while (CurrentTime < EndTime) {
 
@@ -57,8 +58,9 @@ while (CurrentTime < EndTime) {
 ループ内のif文はそれぞれ決められた時間に実行されます．
 時間を取得→if文と比較することで，リアルタイム性を確保しています．
 以下のプログラムでは1kHzで制御を実行，100HzでCSVを書き込み，1Hzでターミナルに出力を行っています．
-また，緊急停止のフラグを毎ループ確認しています．終了フラグが`True`であれば，制御ループを抜けます．
-```cpp
+また，緊急停止のフラグを毎ループ確認しています．
+終了フラグが`True`もしくはターミナルでキー入力されれば，制御ループを抜けます．
+```c++
 /*　現在時刻の取得　*/
 CurrentTime = GetTime();
 
@@ -87,11 +89,28 @@ if (CurrentTime >= PrintTime + 1.0){
 }
 
 /* 終了フラグによる緊急停止 */
-    if (EndFlag)
-        break;
+if (EndFlag || kbhit() == 1) {
+    EndFlag = true;		//終了フラグを立てる
+    break;
+}
 ```
-最後に制御を終了しプログラムを終わります．
-```cpp
+
+制御ループを抜けると，まずCSVの書き込みを行うか否かを判別します．
+判別には`EndFlag`を使用し，正常終了時のみCSVファイルを出力するようにします．
+途中で終了した場合は，CSVファイルを出力しません．
+```c++
+/* 正常終了時にCSVファイルを書き込み */
+if (!EndFlag) {
+    std::cout << "Normal End!" << std::endl;
+    std::cout << "CSV file is saved as " << FILE_NAME << std::endl;
+    csvWriter(true);
+} else {
+    std::cout << "Emergency Stop!" << std::endl;
+    std::cout << "CSV file is not saved!" << std::endl;
+}
+```
+最後に，モータの電流を切り，通信を終了して，プログラム自体を終了します．
+```c++
 mbed.ch1 = 0.0;     //モータの指令値を0にする
 US.send(&mbed);     //UDPの送信
 
@@ -102,19 +121,19 @@ return -1;
 ```
 以上が`main.cpp`の内容になります．
 
-### myconfig.h
+### 2. myconfig.h
 このヘッダーファイルでは使用するグローバル変数やクラスなどの宣言を行っています．
 まず
-```cpp
+```c++
 const char* FILE_NAME = "../Data/test.csv"; //ファイルネーム（実験ごとに書き換えないと上書きされる）
 ```
 ではCSVのファイル名を決めます．
-同一の名前のCSVがすでにあった場合，上書きされるので注意してください．
+**同一の名前のCSVがすでにあった場合，上書きされるので注意してください．**
 実験では多数のファイルを生成するので，ファイル名を見ただけでどの実験か判断できるようにファイル名を決めてください．
 
 次に，**モータ制御に使用される値の変数をまとめた構造体**が以下となります．
-制御について記述する場合はこの構造体を使用してください．
-```cpp
+**制御について記述する場合はこの構造体を使用してください．**
+```c++
 /* モータ制御に関するすべての変数を一つにした構造体 */
 struct MotorInformation{
     double t = 0.0;         //時間[s]
@@ -140,17 +159,17 @@ struct MotorInformation{
 次に構造体を初期化します．
 ここでMIはモータ制御に使用し，`MI_send`はグラフプロット用に使用されます．
 制御を記述する際はMIを使用してください．
-```cpp
+```c++
 MotorInformation MI;        //モータに関する構造体を初期化
 MotorInformation MI_send;   //グラフ描画用の構造体を初期化
 ```
 変数を定義します，`EndFlag`はモータの緊急停止を監視するフラグです．
-```cpp
+```c++
 int count;              //Raspberry Pi -- mbed間の通信遅れを計算結果の格納する変数
 bool EndFlag = false;  //モータ制御を終了するためのフラグ
 ```
 以下はUDPの送受信を行うための宣言です．
-```cpp
+```c++
 udpReceive UR{50000, "10.0.1.4"};   //UDPの受信を設定
 udpSend US{1235, "10.0.1.3"};       //UDPの送信を設定
 
@@ -159,11 +178,11 @@ toPC pc;        //UDP受信用の構造体を初期化
 ```
 以上が`myconfig.h`の内容です．
 
-### myfunc.h
+### 3. myfunc.h
 このヘッダーファイルでは制御に使用する関数が宣言されています．
 
 まずはじめに，
-```cpp
+```c++
 /* 制御を行う関数 */
 void Control(double CurrentTime){
 
@@ -174,12 +193,12 @@ void Control(double CurrentTime){
 
 この関数では，まずはじめにmbedからのUDPの受信が行われます．
 これによってモータに装着れているエンコーダのパルスを受け取ります．
-```cpp
+```c++
 int num = UR.receive(&pc, &mbed);   //UDPを受信
 ```
 
 次に，関数内で使用される変数の定義が行われます．
-```cpp
+```c++
 int num = UR.receive(&pc, &mbed);   //UDPを受信
 static bool FirstTime = true;       //初回起動のみ実行するためのフラグ
 static int initial = 0;             //制御開始時のエンコーダパルスを記録する変数
@@ -196,7 +215,7 @@ static int ResponseCount = 0;       //モータのレスポンスをカウント
 ```
 次に，初回のみエンコーダの初期値を計算します．
 これによって，初期値ズレによるモータの暴走を抑制します．
-```cpp
+```c++
 /*　制御開始時にエンコーダパルスを記録（初期値記録）　*/
 if(FirstTime) {
     if (num > 0) {
@@ -210,7 +229,7 @@ if(FirstTime) {
 そして，エンコーダのパルスから角度を計算します．
 その後，角度をサンプリング時間で微分して角速度を計算，同様に角加速度を角速度から計算します．
 ここで，エンコーダのパルス列は離散的であるため，角速度・角加速度の計算にはLPFを用いて平滑化を行います．
-```cpp
+```c++
 /* 角度・角速度・角加速度の計算 */
 smp = CurrentTime - MI.t;   //実サンプリングの計算
 MI.t = CurrentTime; //現在の時間を格納
@@ -226,7 +245,7 @@ wm_old = wm_; //角速度LPF用の値を保持
 am_old = am_; //角加速度LPF用の値を保持
 ```
 つぎに安全措置のため緊急停止条件を書きます．
-```cpp
+```c++
 /* 一定速度に達したら制御を終了する */
 if(fabs(MI.wm) > 40) {
     OverSpeedCount++;
@@ -251,7 +270,7 @@ if(fabs(MI.wm) < 0.15 && fabs(MI.u) > 0.05){
 ```
 ここまで計算できたら，モータの角度，角速度，角加速度の情報を使って制御の記述を行います．
 **制御は以下に示す部分に記述してください．**
-```cpp
+```c++
 /*-----------------------------------ここから書いてください----------------------------------------------*/
 
 
@@ -260,7 +279,7 @@ if(fabs(MI.wm) < 0.15 && fabs(MI.u) > 0.05){
 ```
 
 次に，モータの指令値が上限を超えないように値を制限して，UDPでmbedに指令値を送信します．
-```cpp
+```c++
 /* 制御指令値は最大1~-1なので，制限を計算する */
 if (MI.u > 1.0){
     MI.u = 1.0;
@@ -277,9 +296,9 @@ count = mbed.checkCount - pc.returnCount;   //Raspberry Pi -- mbed間の通信�
 以上がControl関数の内容です．
 
 また，他の関数はCSVを記録する関数，ターミナルに出力するための関数，現在の時間を取得する関数，グラフを描画するための関数があります．
-```cpp
+```c++
 /* CSVを記録する関数 */
-void csvWriter(double CurrentTime, double OldTime){
+void csvWriter(bool WriteFlag){
 
 }
 
@@ -313,7 +332,7 @@ void *func_thread(void *arg) {
 ### モータ制御の時間を変更する
 時間を変更する場合はmain.cpp内の`EndTime`を変更します．
 たとえば，モータ制御の時間を5秒間としたいときは
-```cpp
+```c++
 double EndTime = 5.0;
 ```
 と変更します．
@@ -321,7 +340,7 @@ double EndTime = 5.0;
 ### 記録されるCSVファイルの名前を変更する
 CSVのファイル名を変更する場合はmyconfig.h内の`FILE_NAME`を変更します．
 たとえば，PID制御でKpゲインが1.0，Kdゲインが0.1，Kiゲインが0.01の場合は
-```cpp
+```c++
 const char* FILE_NAME = "../Data/PIDControl_Kp1.0_Kd0.1_Ki0.01.csv";
 ```
 と変更します．
@@ -330,19 +349,19 @@ const char* FILE_NAME = "../Data/PIDControl_Kp1.0_Kd0.1_Ki0.01.csv";
 ### 制御を記述する
 制御はmyfunc.hのControl関数内の以下に示す部分に必ず記述してください．
 この場所以外で制御について記述すると，モータが正常に制御されない可能性があります．
-```cpp
+```c++
 /*-----------------------------------ここから書いてください----------------------------------------------*/
 
 
 /*-----------------------------------ここまで書いてください----------------------------------------------*/
 ```
 たとえば，モータへの指令値を0.5としたいならば，
-```cpp
+```c++
 MI.u = 0.5;
 ```
 と書いてください．
 また，モータの目標角度をπ (rad)に設定したい場合は，
-```cpp
+```c++
 MI.thmref = M_PI;
 ```
 と書いてください．
@@ -354,7 +373,7 @@ MI.thmref = M_PI;
 そこで，Plotフォルダの`paint_class_bc.cpp`の一番下にある関数を一部変更します．
 
 初期状態では
-```cpp
+```c++
 
 /* 角度のプロット */
 GraphLabel("Time[sec]", "Angle[rad]", GLColor::Black);
@@ -367,7 +386,7 @@ GraphPlot(1, MI_send.t, MI_send.thmref, 1.0, GLColor::Red);
 //GraphPlot(1, MI_send.t, MI_send.wmref, 1.0, GLColor::Red);
 ```
 となっていますが，これを
-```cpp
+```c++
 /* 角度のプロット */
 //GraphLabel("Time[sec]", "Angle[rad]", GLColor::Black);
 //GraphPlot(0, MI_send.t, MI_send.thm, 1.0, GLColor::Blue);
