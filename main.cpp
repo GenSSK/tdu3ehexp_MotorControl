@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
 
 		/*　0.01[sec]で実行　*/
 		if (CurrentTime >= WroteTime + 0.01){
-			csvWriter(CurrentTime, ControlledTime); //CSVに書き込みを行う関数
+			csvWriter(false); //CSVに書き込みを行う関数
 			WroteTime = GetTime();
 		}
 
@@ -73,7 +73,7 @@ int main(int argc, char* argv[]) {
 	if (!EndFlag) {
 		std::cout << "Normal End!" << std::endl;
 		std::cout << "CSV file is saved as " << FILE_NAME << std::endl;
-		csvWriter(CurrentTime, EndTime);
+		csvWriter(true);
 	} else {
 		std::cout << "Emergency Stop!" << std::endl;
 		std::cout << "CSV file is not saved!" << std::endl;
